@@ -4,9 +4,9 @@ Tek dosyalık statik demo. Build yok, bağımlılık yok. Palet: **espresso + te
 
 **Hepsini bir arada görmek için:** [`senaryolar.html`](senaryolar.html)
 
-> **Durum:** mekanik hazır, videolar henüz üretilmedi. Site şu an
-> hero'da CSS fallback, scroll sahnesinde prosedürel placeholder ile çalışıyor.
-> Videolar `_raw/` altına gelince aşağıdaki ffmpeg adımları çalıştırılacak.
+> **Durum:** tamam. 3 hero loop + 2×120 kare + 5 galeri önizlemesi üretildi ve yerinde.
+> Videolar yine de zorunlu değil: silinirlerse hero CSS fallback'e, scroll
+> prosedürel placeholder'a düşer ve site çalışmaya devam eder.
 
 ## Senaryolar
 
@@ -58,8 +58,12 @@ _raw/               ham Higgsfield çıktıları — DAĞITILMAZ (.vercelignore)
 _tools/             npm ffmpeg/ffprobe — DAĞITILMAZ
 ```
 
-Hedef dağıtım boyutu ~21 MB. Ziyaretçi başına indirilen: 1 hero (0.7–1.4 MB webm)
-+ 120 kare (4–7 MB).
+Dağıtılan toplam **26 MB** (media 11 MB + frames 16 MB). Ziyaretçi başına indirilen:
+1 hero webm (0.8–1.3 MB) + 120 kare (7.3–8.0 MB); mobilde `STEP=2` ile kareler yarıya iner.
+
+İç mekân görüntüsü (kumaş dokusu, tül, parke deseni) mimarlık versiyonundaki betondan
+daha detaylı olduğu için JPEG'ler aynı kalitede daha ağır basıyor — mimar-demo 21 MB'tı.
+Hafifletmek gerekirse kare üretiminde `-q:v 4` yerine `-q:v 5` yeter (~%15–20 kazanç).
 
 **Dosya adı tutarlılığı:** kare klasörleri `a`/`b` olduğu için önizleme klipleri de
 `sa.mp4`/`sb.mp4` — `s1`/`s2` değil. Karıştırma.

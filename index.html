@@ -1044,15 +1044,22 @@ COPY[SCRL].forEach((row, i) => {
   }
   function reflow(){ resize(); lastP = -1; render(); }
 
-  /* --- preload --- */
-  for (let i = 1; i <= FRAME_COUNT; i += STEP){
+  /* --- preload ---
+     DİKKAT: STEP>1 iken döngü son kareye denk gelmez (1,3,…,119 → 120 hiç istenmez).
+     drawFrame ise p=1'de 120'yi ister, bulamaz ve placeholder'a düşer — yani
+     mobilde scroll'un tam sonunda görüntü kayboluyordu. Son kare her hâlükârda listede. */
+  const kareler = [];
+  for (let i = 1; i <= FRAME_COUNT; i += STEP) kareler.push(i);
+  if (kareler[kareler.length - 1] !== FRAME_COUNT) kareler.push(FRAME_COUNT);
+
+  kareler.forEach(i => {
     const im = new Image();
     im.decoding = 'async';
-    im.onload  = () => { if (++loaded >= Math.floor(FRAME_COUNT/STEP * 0.6)) framesReady = true; };
+    im.onload  = () => { if (++loaded >= Math.floor(kareler.length * 0.6)) framesReady = true; };
     im.onerror = () => { failed++; };
     im.src = FRAME_PATH(i);
     imgs[i] = im;
-  }
+  });
 
   /* --- progress --- */
   function getProgress(){
