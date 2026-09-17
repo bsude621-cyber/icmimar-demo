@@ -49,8 +49,9 @@ python -m http.server 8021
 index.html          demo site (senaryo parametreli)
 senaryolar.html     6 senaryo karşılaştırma galerisi
 media/
-  hero1..3.mp4/.webm   16 sn dikişsiz boomerang loop, 1600x900, sessiz
-  hero1..3-m.mp4/.webm MOBİL hero: 720px, aynı loop (220–365 KB)
+  hero1..3.mp4/.webm     16 sn dikişsiz boomerang loop, 1600x900, sessiz
+  hero1..3-mp.mp4/.webm  DİKEY telefon hero: 828x1794 portre kırpım (0.38–1.15 MB)
+  hero1..3-m.mp4/.webm   YATAY telefon hero: 1280x720 (0.52–0.83 MB)
   preview/h1..3.mp4    galeri önizlemeleri (560px, ~150–200 KB)
   preview/sa,sb.mp4    galeri önizlemeleri
 frames/a/0001..0120.jpg  scroll-scrub kareleri (1440px, masaüstü)
@@ -60,9 +61,9 @@ _raw/               ham Higgsfield çıktıları — DAĞITILMAZ (.vercelignore)
 _tools/             npm ffmpeg/ffprobe + ekran görüntüleri — DAĞITILMAZ
 ```
 
-Dağıtılan toplam **30 MB** (media 13 MB + frames 18 MB). Ziyaretçi başına indirilen:
+Dağıtılan toplam **38 MB** (media 20 MB + frames 18 MB). Ziyaretçi başına indirilen:
 · **masaüstü:** 1 hero webm (0.8–1.3 MB) + 120 kare (7.3–8.0 MB) ≈ **8.2 MB**
-· **telefon:** 1 mobil hero (0.22–0.37 MB) + 41 mobil kare (0.82–0.95 MB) ≈ **1.14 MB** (ölçüldü)
+· **telefon:** 1 dikey hero (0.38–1.15 MB) + 41 mobil kare (0.82–0.95 MB) = **1.87–2.18 MB** (ölçüldü)
 
 İç mekân görüntüsü (kumaş dokusu, tül, parke deseni) mimarlık versiyonundaki betondan
 daha detaylı olduğu için JPEG'ler aynı kalitede daha ağır basıyor — mimar-demo 21 MB'tı.
@@ -148,6 +149,8 @@ ffmpeg -y -i _raw/scroll_raw_alt1.mp4 -an -vf "scale=560:-2" -c:v libx264 -crf 3
 | Sahne metinleri | JS `COPY` sabiti (scroll videosuna göre iki set) |
 | Mobil kare seyreltme | JS `STEP = isMobile ? 3 : 1` + ayrı `frames/<a\|b>-m/` klasörü |
 | Telefon tespiti | JS `isPhone` — `innerWidth<768 \|\| min(innerWidth,innerHeight)<600` |
+| Mobil hero varyantı | JS `MV` — dikeyde `-mp` (828x1794), yatayda `-m` (1280x720) |
+| Mobil hero kırpım ofseti | ffmpeg `crop=498:1080:<x0>:0` — h1 x0=1330, h2 x0=480, h3 x0=1080 |
 | Mobil alt bar | `.mbar` CSS + `<div class="mbar">` HTML; `@media(max-width:860px)` |
 | Kare geç yükleme | `preload()` — IntersectionObserver + scroll + hero `loadeddata` + 2.5 sn |
 | DPR tavanı | `resize()` içindeki `Math.min(devicePixelRatio, 2)` |
@@ -202,7 +205,8 @@ ya da yalnız telefonda çalışan JS dallarında.
    seçiliyor (Safari/iOS → her zaman mp4), **tek `src`** veriliyor, `error` olayında diğer
    formata geçiliyor, otomatik oynatma engellenirse ilk dokunuş/tıklamada başlatılıyor.
    `saveData` açıksa video hiç inmiyor, CSS fallback görünüyor.
-5. **Mobil medya seti:** telefonda 720px `hero<N>-m.*` ve 41 karelik `frames/<a|b>-m/` iniyor.
+5. **Mobil medya seti:** telefonda `hero<N>-mp.*` (dikey) / `hero<N>-m.*` (yatay) ve
+   41 karelik `frames/<a|b>-m/` iniyor.
    Kareler geç yükleniyor (IntersectionObserver + ilk kaydırma + hero `loadeddata`, en geç
    2.5 sn) — ilk ekran hero ile bant genişliği yarışmıyor.
 6. **Yatay mod** (≤900×≤480): nav bandı inceldi, hero metni nav ile alt bar arasına ortalandı,
@@ -246,6 +250,80 @@ Ara düğmesi `--frost` metin **14.9:1** — ikisi de AA'nın üstünde.
 Ekran görüntüleri: `_tools/tmp/mobil/` (375 hero / hizmetler / scrub / iletişim / menü /
 senaryo paneli / senaryolar.html, 812×375 yatay, 1440 hero).
 
+### 2. tur — gerçek telefon geri bildirimi (Eylül 2026)
+
+Mert siteyi iPhone'da açtı: *hero bulanık* ve *ilk ekranda yazı/düğme o kadar çok yer
+kaplıyor ki videoda ne olduğu anlaşılmıyor.* İkisi de düzeltildi.
+
+**A) Hero çözünürlüğü ve kadrajı.** Asıl sorun piksel sayısı değil **en-boy oranıydı.**
+Dikey telefonda hero tam ekran ve `object-fit:cover`; 16:9 bir dosya 1170x2532 cihaz
+pikseline kaplatılırken **6.24 kat** büyütülüyordu (720x406 dosya). Yalnızca genişliği
+1280'e çıkarmak bunu 3.52'ye indirirdi — masaüstü dosyasının telefondaki 2.81'inden
+hâlâ kötü. Bu yüzden telefona **dikey kırpım** üretildi:
+
+| | dosya | `videoWidth/(clientWidth·DPR)` | **gerçek büyütme** (`cover`) |
+|---|---|---|---|
+| önce | 720x406 | 0.62 | **6.24x** |
+| masaüstü dosyası telefonda | 1600x900 | 1.37 | 2.81x |
+| 1280x720 (sadece genişlik artsaydı) | 1280x720 | 1.09 | 3.52x |
+| **şimdi (375x812)** | 828x1794 | 0.74 | **1.36x** |
+| **şimdi (390x844)** | 828x1794 | 0.71 | **1.41x** |
+| **şimdi (414x896)** | 828x1794 | 0.67 | **1.50x** |
+| şimdi (812x375 yatay) | 1280x720 | 0.53 | 1.90x |
+
+İstenen `videoWidth/(clientWidth·DPR)` oranı dikey kırpımda 1.0'ın altında kalıyor, çünkü
+o oran videonun **genişliğe** göre ölçeklendiğini varsayar; `cover` ile dikey kapta ölçek
+**yükseklikten** belirleniyor. Karar verici sayı son sütun: 6.24 → 1.36. 16:9 kalıp bir
+dosyayla 1.0 oranını tutturmak (1170x658) gerçek büyütmeyi 3.85'e çıkarırdı, yani daha kötü.
+
+**Kadraj ölçümü.** Her hero videosunun 4 karesi gri tona çevrilip sütun başına gradyan
+(detay) yoğunluğu ölçüldü; 498 px'lik kayan pencereyle en iyi ofset arandı:
+
+| | 10 banda göre detay | seçilen x0 (merkez) | skor | tepe | orta kırpım |
+|---|---|---|---|---|---|
+| hero1 salon | soldan sağa artıyor (0.8 → 3.5) | **1330** (%82) | 3.24 | 3.35 | 2.20 (**+%47**) |
+| hero2 malzeme | düz (2.4–3.2), masa her yerde dolu | **480** (%38) | 2.90 | 3.03 | 2.69 (+%8) |
+| hero3 mutfak | düz (1.3–1.7) | **1080** (%69) | 1.43 | 1.64 | 1.60 |
+
+hero3'te tepe skor mutfak dolabının çekmece çizgilerinden geliyor; kadraj pirinç bataryayı
+ve mermer adayı merkeze alacak şekilde seçildi — ölçüm yol gösterici, karar kompozisyon.
+`object-position` kullanılmadı: kırpım kaynakta yapıldığı için hem kadraj hem çözünürlük
+aynı anda düzeldi.
+
+Dikey hero 828x1794 (crf 30 / vp9 crf 38), yatay hero 1280x720. Bütçe kare setinden
+kısılmadan tutturuldu — mobil toplam **1.87–2.18 MB** (en ağır kombinasyon h=2&s=b, iOS mp4).
+
+**B) İlk ekranda video görünürlüğü.** Metin bloğu (etiket + başlık + alt metin + CTA'lar)
+küçültüldü. Küçülen yalnızca **başlık ve boşluklar**; gövde 16px, etiket 13px, düğme ≥44px
+kaldı.
+
+| | önce | sonra |
+|---|---|---|
+| H1 (375px) | 42px | 30px (`clamp(28px,8vw,34px)`) |
+| etiket satırı | 2 satır (`.22em`) | 1 satır (`.08em`) |
+| başlık alt boşluğu | 30px | 16px |
+| alt metin satır yüksekliği / boşluk | 1.68 / 40px | 1.5 / 18px |
+| hero alt dolgusu | `12vh + 40px` | `68px + safe + 64px` |
+| **metin bloğu / ekran (375x812)** | **%53** | **%41** |
+| **metin bloğu / ekran (390x844)** | **%52** | **%39.7** |
+| metin bloğu alanı / ekran alanı (390) | — | %35.7 |
+| üstte kesintisiz video (390x844) | — | 377px = **%44.6** |
+
+Perde (`hero-scrim`) mobilde yeniden kuruldu: masaüstündeki soldan gelen koyu katman
+kaldırıldı, üst %13–33 neredeyse şeffaf, metnin başladığı %43'ten sonra sertçe koyulaşıyor.
+Kontrast tahmin edilmedi — metin gizlenmiş kareden arka planın **en parlak %5'i** ölçülüp
+kompozit metin rengiyle WCAG oranı hesaplandı (güneş vuran duvarın üstü, en kötü durum):
+
+| | 375x812 | 390x844 | gerek |
+|---|---|---|---|
+| etiket (13px, terra-bright) | **5.19** | **5.46** | 4.5 |
+| H1 (30px, frost) | **9.94** | **10.17** | 3.0 |
+| alt metin (16px, frost-dim) | **6.26** | **6.35** | 4.5 |
+
+İlk perde denemesi (üstte tamamen şeffaf) ölçümde etiket için **1.16** verdi — o yüzden
+%43'ten sonraki koyuluk 0.74'e çekildi. Bu, "video görünsün" hedefini bozmuyor: koyulaşma
+metnin zaten kapattığı bandın altında başlıyor.
+
 ### Bilinen kalan sorunlar
 
 - **568×320 gibi çok alçak yatay ekranlarda** (iPhone 5 landscape) hero içeriği 320px'e
@@ -253,6 +331,13 @@ senaryo paneli / senaryolar.html, 812×375 yatay, 1440 hero).
   667×375 ve üstü yatay ekranlarda sığıyor.
 - Mobil kare seti 720px; 3x DPR telefonlarda scroll-scrub görüntüsü masaüstü setine göre
   bir tık yumuşak. Bilinçli takas — 1440px set telefonda 7–8 MB ediyordu.
+- Dikey hero kırpımı kaynak karenin %26'sını gösteriyor (498/1920). Mobilya sahnenin alt
+  yarısında olduğu için metin bloğunun arkasına denk geliyor; üst yarıda duvar dokusu ve
+  ışık görünüyor. Mobilyayı ekranın üst yarısına almak daha dar bir kırpım (daha çok
+  büyütme) gerektirirdi — netlik tercih edildi.
+- Yatay modda (812x375) metin bloğu ekran yüksekliğinin %60'ı; 375px yükseklikte bundan
+  kısmak punto kurallarını bozardı. Metin 56vw'lik bir sütuna alındığı için **alan** payı
+  %33.8 ve sağ tarafta video net görünüyor. %45 hedefi dikey ekranlar için tutuldu.
 - Masaüstünde nav linkleri (11px) ve `brand-sub` (8.5px) 13px'in altında kalmaya devam ediyor;
   brief masaüstü görünümünün korunmasını istediği için dokunulmadı.
 

@@ -441,9 +441,22 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .foot-links a{min-height:44px;display:inline-flex;align-items:center;font-size:13px;
     letter-spacing:.16em}
 
-  /* ≥13px yazı — büyük harf + harf aralıklı etiketlerde aralık kısaltılır ki taşmasın */
-  .hero-kick{font-size:13px;letter-spacing:.22em}
-  .hero-sub{font-size:16px}
+  /* ---- HERO: ilk ekranda video görünsün ----
+     Mobil turda punto ve dokunma hedefleri büyürken metin bloğu ekranın yarısını
+     yiyordu. Küçülen şey başlık ve boşluklar; gövde 16px, etiket 13px, düğme 44px kalıyor.
+     Ölçülen: metin bloğu 375x812'de ekranın %41'i (önce %53). */
+  .hero-kick{font-size:13px;letter-spacing:.08em;margin-bottom:12px;gap:8px;line-height:1.5}
+  .hero-kick::before{width:22px}
+  .hero h1{font-size:clamp(28px,8vw,34px);line-height:1.04;margin-bottom:16px}
+  .hero-sub{font-size:16px;line-height:1.5;margin-bottom:18px}
+  .hero-inner{padding-bottom:calc(68px + env(safe-area-inset-bottom) + 64px)}
+  /* Soldan gelen koyu perde kaldırıldı — masaüstünde metin solda, mobilde altta.
+     Üst %13–33 neredeyse şeffaf (video burada görünüyor), metnin başladığı
+     %43'ten sonra sertçe koyulaşıyor. Eşikler kontrast ölçümüyle belirlendi:
+     güneş vuran duvarın en parlak %5'i üzerinde bile etiket 5:1'in üstünde. */
+  .hero-scrim{background:linear-gradient(180deg,
+    rgba(13,10,8,.60) 0%,rgba(13,10,8,.12) 13%,rgba(13,10,8,.12) 33%,
+    rgba(13,10,8,.74) 43%,rgba(13,10,8,.88) 74%,rgba(13,10,8,.96) 100%)}
   .kick{font-size:13px;letter-spacing:.22em}
   .svc p{font-size:16px}
   .step p{font-size:16px}
@@ -493,7 +506,6 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
     overflow-y:auto;overscroll-behavior:contain}
   .nav.scrolled .nav-menu{inset:var(--navh,56px) 0 0}
   .nav-menu .nav-links a{font-size:16px;padding:14px 0}
-  .hero-inner{padding-bottom:calc(12vh + 40px)}
   .hero-cta{gap:10px}
   .hero-cta .btn{flex:1 1 100%;justify-content:center}
   .svc-grid{grid-template-columns:1fr}
@@ -523,7 +535,10 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .nav .brand-sub{display:none}
   .hero-kick{margin-bottom:8px}
   .hero h1{font-size:clamp(26px,3.8vw,34px);line-height:1.05;margin-bottom:12px}
-  .hero-sub{font-size:13.5px;line-height:1.55;margin-bottom:14px;max-width:620px}
+  /* yatayda metin sola sıkışsın, sağ yarıda video net görünsün */
+  .hero h1{max-width:56vw}
+  .hero-sub{font-size:13.5px;line-height:1.55;margin-bottom:14px;max-width:52vw}
+  .hero-cta{max-width:56vw}
   /* yatayda yan yana sığıyorlar: alt alta dizilirlerse hero ilk ekrana sığmıyor */
   .hero-cta .btn,.contact-cta .btn{flex:0 1 auto;min-height:44px;padding:12px 20px}
   /* 375px yükseklikte kart nav ile alt bar arasına sığmalı → sıkıştırılır */
@@ -1158,7 +1173,11 @@ const heroVideo = document.getElementById('heroVideo');
 if (heroVideo){
   if (reduced || saveData) heroVideo.remove();    // → .hero-fallback görünür
   else {
-    const base = 'media/hero' + HERO + (isPhone ? '-m' : '');
+    /* Telefonda hero tam ekran ve object-fit:cover — yatay 16:9 dosya dikey ekranda
+       6 kat büyütülüyordu ("piksel piksel"). Dikey telefona 828x1794 portre kırpım
+       (-mp), yatay telefona 1280x720 (-m) veriliyor. */
+    const MV = isPhone ? (innerHeight >= innerWidth ? '-mp' : '-m') : '';
+    const base = 'media/hero' + HERO + MV;
     let alt = VFMT === 'webm' ? 'mp4' : 'webm';
     const vplay = () => { const p = heroVideo.play(); if (p && p.catch) p.catch(() => { blocked = true; }); };
     let blocked = false;
