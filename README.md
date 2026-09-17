@@ -50,7 +50,7 @@ index.html          demo site (senaryo parametreli)
 senaryolar.html     6 senaryo karşılaştırma galerisi
 media/
   hero1..3.mp4/.webm     16 sn dikişsiz boomerang loop, 1600x900, sessiz
-  hero1..3-mp.mp4/.webm  DİKEY telefon hero: 828x1794 portre kırpım (0.38–1.15 MB)
+  hero1..3-mp.mp4/.webm  DİKEY telefon hero: 828x1794 portre kırpım (0.54–1.24 MB)
   hero1..3-m.mp4/.webm   YATAY telefon hero: 1280x720 (0.52–0.83 MB)
   preview/h1..3.mp4    galeri önizlemeleri (560px, ~150–200 KB)
   preview/sa,sb.mp4    galeri önizlemeleri
@@ -63,7 +63,7 @@ _tools/             npm ffmpeg/ffprobe + ekran görüntüleri — DAĞITILMAZ
 
 Dağıtılan toplam **38 MB** (media 20 MB + frames 18 MB). Ziyaretçi başına indirilen:
 · **masaüstü:** 1 hero webm (0.8–1.3 MB) + 120 kare (7.3–8.0 MB) ≈ **8.2 MB**
-· **telefon:** 1 dikey hero (0.38–1.15 MB) + 41 mobil kare (0.82–0.95 MB) = **1.87–2.18 MB** (ölçüldü)
+· **telefon:** 1 dikey hero (0.54–1.24 MB) + 41 mobil kare (0.82–0.95 MB) = **2.00–2.23 MB** (ölçüldü)
 
 İç mekân görüntüsü (kumaş dokusu, tül, parke deseni) mimarlık versiyonundaki betondan
 daha detaylı olduğu için JPEG'ler aynı kalitede daha ağır basıyor — mimar-demo 21 MB'tı.
@@ -150,7 +150,8 @@ ffmpeg -y -i _raw/scroll_raw_alt1.mp4 -an -vf "scale=560:-2" -c:v libx264 -crf 3
 | Mobil kare seyreltme | JS `STEP = isMobile ? 3 : 1` + ayrı `frames/<a\|b>-m/` klasörü |
 | Telefon tespiti | JS `isPhone` — `innerWidth<768 \|\| min(innerWidth,innerHeight)<600` |
 | Mobil hero varyantı | JS `MV` — dikeyde `-mp` (828x1794), yatayda `-m` (1280x720) |
-| Mobil hero kırpım ofseti | ffmpeg `crop=498:1080:<x0>:0` — h1 x0=1330, h2 x0=480, h3 x0=1080 |
+| Mobil hero kırpımı | ffmpeg `crop=W:H:X:Y` — h1 `378:820:1520:260`, h2 `498:1080:320:0`, h3 `434:940:720:140` |
+| Mobil varsayılan hero | JS `HERO` — `?h=` yoksa telefonda `'2'`, masaüstünde `'1'` |
 | Mobil alt bar | `.mbar` CSS + `<div class="mbar">` HTML; `@media(max-width:860px)` |
 | Kare geç yükleme | `preload()` — IntersectionObserver + scroll + hero `loadeddata` + 2.5 sn |
 | DPR tavanı | `resize()` içindeki `Math.min(devicePixelRatio, 2)` |
@@ -324,6 +325,65 @@ kompozit metin rengiyle WCAG oranı hesaplandı (güneş vuran duvarın üstü, 
 %43'ten sonraki koyuluk 0.74'e çekildi. Bu, "video görünsün" hedefini bozmuyor: koyulaşma
 metnin zaten kapattığı bandın altında başlıyor.
 
+### 3. tur — "videoda ne olduğu anlaşılmıyor" (Eylül 2026)
+
+Netlik düzeldikten sonra ilk ekranın üst yarısı hâlâ düz duvar/perdeydi. Sorun kadraj
+değil **kamera geometrisiydi:** h=1 ve h=3 göz hizasından çekilmiş; mobilya karenin alt
+yarısında, üstte duvar/perde/pencere var. Tek bir statik kırpımla mobilyayı üst yarıya
+taşımak, karenin dörtte birinden küçük bir alana inmek demekti (büyütme 4.5x).
+
+**Ölçüm.** Metin bloğunun üstünde kalan bölge (ekranın ilk %43'ü) için iki puan hesaplandı:
+*detay* (tam çözünürlükte gradyan — perde dokusu da sayar) ve **yapı** (bölge 40px'e
+küçültülüp gradyan — ince doku bastırılır, nesne siluetleri kalır). Yapı puanı "burada
+tanınır bir şey var mı" sorusunun vekili:
+
+| hero | mevcut kırpımda yapı | en iyi tam-yükseklik | yorum |
+|---|---|---|---|
+| h1 salon | 11.8 | 12.0 | üstte yalnız perde |
+| **h2 malzeme** | **18.2** | **18.8** | tepeden çekim — kare her yerde dolu |
+| h3 mutfak | 4.7 | 7.8 | üstte tavan + pencere |
+
+**Karar: mobil varsayılan hero = h2 (malzeme masası).** Tepeden çekildiği için dikey
+kırpımda kadraj sorunu yok; üst yarıda keten, pirinç, traverten ve ceviz örnekleri
+görünüyor. Üstelik **netlikten hiç ödün verilmedi** — tam yükseklik kırpım (498x1080,
+kaynak→ekran 2.35x) korundu. Masaüstü varsayılanı h=1 olarak kaldı, `?h=` her zaman kazanır,
+senaryo anahtarı çalışmaya devam ediyor.
+
+Diğer iki hero da (anahtarla seçildiğinde) yeniden kırpıldı — burada netlikten biraz
+verildi, çünkü mobilyayı yukarı almanın başka yolu yok:
+
+| hero | kırpım | yapı puanı | kaynak→ekran | üst yarıda görünen |
+|---|---|---|---|---|
+| h1 | 378x820+1520+260 | 12.5 | 3.10x | kanepe sırtı + yastıklar |
+| **h2 (varsayılan)** | **498x1080+320+0** | **18.8** | **2.35x** | keten, pirinç, traverten, ceviz |
+| h3 | 434x940+720+140 | 7.8 | 2.70x | pencere + tezgâh + pirinç batarya |
+
+Teslim edilen dosya her üçünde de 828x1794, yani **dosya→ekran büyütme 1.36–1.50x**
+(piksellenme yok); değişen, kaynaktan gelen yumuşaklık.
+
+**İlk ekran payı yeniden ölçüldü.** İki CTA yan yana alındı (harf aralığı .06em, uzun olan
+iki satıra sarıyor, yükseklik ≥44px, punto 13px):
+
+| | 1. tur sonrası | 2. tur sonrası | **3. tur** |
+|---|---|---|---|
+| metin bloğu / ekran (375x812) | %53 | %41 | **%35.1** |
+| metin bloğu / ekran (390x844) | %52 | %39.7 | **%34.1** |
+| metin alanı / ekran alanı (390) | — | %35.7 | **%30.6** |
+| üstte kesintisiz video (375) | — | %42.7 | **%48.6** |
+| üstte kesintisiz video (390) | — | %44.6 | **%50.3** |
+
+Perde de buna göre kaydırıldı: şeffaf bant %13–40'a genişledi, koyulaşma metnin başladığı
+%49'dan sonra. Kontrast yeni (çok daha parlak) kadrajla yeniden ölçüldü — arka planın en
+parlak %5'i üzerinde:
+
+| | 375x812 | 390x844 | gerek |
+|---|---|---|---|
+| etiket (13px) | **6.30** | **6.53** | 4.5 |
+| H1 (30px) | **11.79** | **11.93** | 3.0 |
+| alt metin (16px) | **6.80** | **6.83** | 4.5 |
+
+Bütçe: varsayılan mobil ziyaret **2.10 MB**, en ağır kombinasyon (iOS mp4, `?s=b`) **2.23 MB**.
+
 ### Bilinen kalan sorunlar
 
 - **568×320 gibi çok alçak yatay ekranlarda** (iPhone 5 landscape) hero içeriği 320px'e
@@ -331,10 +391,11 @@ metnin zaten kapattığı bandın altında başlıyor.
   667×375 ve üstü yatay ekranlarda sığıyor.
 - Mobil kare seti 720px; 3x DPR telefonlarda scroll-scrub görüntüsü masaüstü setine göre
   bir tık yumuşak. Bilinçli takas — 1440px set telefonda 7–8 MB ediyordu.
-- Dikey hero kırpımı kaynak karenin %26'sını gösteriyor (498/1920). Mobilya sahnenin alt
-  yarısında olduğu için metin bloğunun arkasına denk geliyor; üst yarıda duvar dokusu ve
-  ışık görünüyor. Mobilyayı ekranın üst yarısına almak daha dar bir kırpım (daha çok
-  büyütme) gerektirirdi — netlik tercih edildi.
+- h1 ve h3 dikey kırpımları kaynak karenin %20–23'ünü gösteriyor; mobilyayı üst yarıya
+  almak için daraltıldılar, bu yüzden h2'den bir tık yumuşaklar. Mobil varsayılan h2
+  olduğu için ziyaretçilerin çoğu en keskin olanı görüyor.
+- h3'te (mutfak) üst üçte bir hâlâ gece mavisi pencere; pirinç batarya ~%40'tan itibaren
+  giriyor. Tam yükseklik kırpımda yapı puanı 4.7'den 7.8'e çıktı ama h2 seviyesinde değil.
 - Yatay modda (812x375) metin bloğu ekran yüksekliğinin %60'ı; 375px yükseklikte bundan
   kısmak punto kurallarını bozardı. Metin 56vw'lik bir sütuna alındığı için **alan** payı
   %33.8 ve sağ tarafta video net görünüyor. %45 hedefi dikey ekranlar için tutuldu.
