@@ -384,6 +384,57 @@ parlak %5'i üzerinde:
 
 Bütçe: varsayılan mobil ziyaret **2.10 MB**, en ağır kombinasyon (iOS mp4, `?s=b`) **2.23 MB**.
 
+### 4. tur — "yazıları ve butonları daha da küçült" (Eylül 2026)
+
+Malzeme masası hero'su işe yaradı; Mert bu kez metin bloğunun kendisini küçültmek istedi.
+Hedef: metin bloğu ilk ekranın **en fazla %25'i**, video **en az %55'i**.
+
+| | 3. tur | **4. tur** | hedef |
+|---|---|---|---|
+| H1 (375px) | 30px | **24,75px** | 24–26 |
+| H1 (390px) | 31,2px | **25,7px** | 24–26 |
+| alt metin | 16px / 1,5 / 4 satır | **15px / 1,45 / 2 satır** | 15px, ~1,4 |
+| etiket (kicker) | 13px | **13px** | 12–13 |
+| düğme yüksekliği | 62px | **48px** | 48–52 |
+| düğme puntosu | 13px | **13px** | 12–13 |
+| **metin bloğu / ekran (375×812)** | %35,1 | **%24,3** | ≤%25 |
+| **metin bloğu / ekran (390×844)** | %34,1 | **%23,7** | ≤%25 |
+| **üstte kesintisiz video (375)** | %48,6 | **%59,4** | ≥%55 |
+| **üstte kesintisiz video (390)** | %50,3 | **%60,7** | ≥%55 |
+
+Puntoyu daha da düşürmek yerine **iki yerde metin kısaltıldı** (koordinatörün talimatı):
+
+1. **Alt metnin 2. cümlesi telefonda gizli** (`<span class="more">`): "Konsept, moodboard,
+   3D görsel, malzeme seçimi ve uygulama — hepsi aynı ekipte." 4 satır ilk ekranın %10'unu
+   yiyordu ve aynı bilgi Hizmetler bölümünde zaten var. Masaüstünde tam metin duruyor.
+2. **İkinci CTA telefonda "Ön Görüşme"** (`<span class="l-short">`). "Ücretsiz Ön Görüşme"
+   yan yana düzende iki satıra sarıyor ve düğmeyi 62px yapıyordu. Masaüstünde tam etiket.
+
+Dokunma hedefleri korundu: düğme görsel yüksekliği 48px (alt sınır 44px), etiketler ≥13px,
+gövde 15px. Tek istisna **320px** genişlikte hero etiketi 12px — 13px'te iki satıra sarıyor;
+12px izin verilen alt sınır ve yalnızca bu tek öğe için geçerli, sitedeki diğer her yazı
+≥13px kaldı.
+
+Perdenin şeffaf bandı metin aşağı indiği için %45'e genişletildi, koyulaşma %52,5'ten
+sonra. Kontrast yeni puntolarla yeniden ölçüldü (arka planın en parlak %5'i):
+
+| | 375×812 | 390×844 | gerek |
+|---|---|---|---|
+| etiket (13px) | **6,81** | **6,91** | 4,5 |
+| H1 (24,75/25,7px) | **12,48** | **12,48** | 4,5 |
+| alt metin (15px) | **6,90** | **6,93** | 4,5 |
+
+Birincil düğme (koyu metin / terra zemin) **6,06**, ikincil düğme frost metin koyu perde
+üzerinde 10'un üzerinde.
+
+**Hero CTA çifti korundu.** Diyetisyen ve Duştaş'ta hero CTA'ları alt bara taşındı çünkü
+oralarda ekranda iki WhatsApp düğmesi vardı. Burada hero "Projeleri Gör" + "Ön Görüşme",
+alt bar "WhatsApp" + "Ara" — işlev tekrarı yok, dört farklı eylem. Kaldırmak yerine
+küçültüldüler.
+
+Dar ekranlar: 320px'te düğmeler yine yan yana (içerik genişliğine göre esnek), metin bloğu
+%27,8 / video %53,3. 360px'te %25,1 / %57,9.
+
 ### Bilinen kalan sorunlar
 
 - **568×320 gibi çok alçak yatay ekranlarda** (iPhone 5 landscape) hero içeriği 320px'e
@@ -396,7 +447,7 @@ Bütçe: varsayılan mobil ziyaret **2.10 MB**, en ağır kombinasyon (iOS mp4, 
   olduğu için ziyaretçilerin çoğu en keskin olanı görüyor.
 - h3'te (mutfak) üst üçte bir hâlâ gece mavisi pencere; pirinç batarya ~%40'tan itibaren
   giriyor. Tam yükseklik kırpımda yapı puanı 4.7'den 7.8'e çıktı ama h2 seviyesinde değil.
-- Yatay modda (812x375) metin bloğu ekran yüksekliğinin %60'ı; 375px yükseklikte bundan
+- Yatay modda (812x375) metin bloğu ekran yüksekliğinin %54'ü; 375px yükseklikte bundan
   kısmak punto kurallarını bozardı. Metin 56vw'lik bir sütuna alındığı için **alan** payı
   %33.8 ve sağ tarafta video net görünüyor. %45 hedefi dikey ekranlar için tutuldu.
 - Masaüstünde nav linkleri (11px) ve `brand-sub` (8.5px) 13px'in altında kalmaya devam ediyor;

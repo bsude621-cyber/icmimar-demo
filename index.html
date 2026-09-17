@@ -176,6 +176,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero-sub{font-size:clamp(15px,1.4vw,17px);line-height:1.68;color:var(--frost-dim);
   max-width:520px;margin:0 0 40px;font-weight:300;text-shadow:0 1px 12px rgba(0,0,0,.6)}
 .hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+.hero-cta .l-short{display:none}
 .btn{display:inline-flex;align-items:center;gap:12px;padding:15px 30px;font-size:11px;
   letter-spacing:.26em;text-transform:uppercase;font-weight:600;border-radius:2px;
   transition:transform .25s,background .3s,border-color .3s,color .3s,box-shadow .3s}
@@ -445,24 +446,29 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
      Mobil turda punto ve dokunma hedefleri büyürken metin bloğu ekranın yarısını
      yiyordu. Küçülen şey başlık ve boşluklar; gövde 16px, etiket 13px, düğme 44px kalıyor.
      Ölçülen: metin bloğu 375x812'de ekranın %41'i (önce %53). */
-  .hero-kick{font-size:13px;letter-spacing:.08em;margin-bottom:12px;gap:8px;line-height:1.5}
-  .hero-kick::before{width:22px}
-  .hero h1{font-size:clamp(28px,8vw,34px);line-height:1.04;margin-bottom:16px}
-  .hero-sub{font-size:16px;line-height:1.5;margin-bottom:18px}
+  .hero-kick{font-size:13px;letter-spacing:.08em;margin-bottom:10px;gap:8px;line-height:1.4}
+  .hero-kick::before{width:20px}
+  .hero h1{font-size:clamp(24px,6.6vw,26px);line-height:1.05;margin-bottom:12px}
+  /* Alt metnin 2. cümlesi telefonda gizli: 4 satır ilk ekranın %10'unu yiyordu,
+     aynı bilgi Hizmetler bölümünde zaten var. Masaüstünde tam metin duruyor. */
+  .hero-sub{font-size:15px;line-height:1.45;margin-bottom:14px}
+  .hero-sub .more{display:none}
   .hero-inner{padding-bottom:calc(68px + env(safe-area-inset-bottom) + 64px)}
   /* iki CTA yan yana: alt alta dizilince ilk ekranın %7'sini daha yiyorlardı.
      Türkçe etiketler uzun olduğu için harf aralığı .06em'e iniyor ve uzun olan
      iki satıra sarıyor; yükseklik ≥44px, punto 13px kalıyor. */
   .hero-cta{flex-wrap:nowrap;gap:8px}
   .hero-cta .btn{flex:1 1 0;min-width:0;justify-content:center;text-align:center;
-    letter-spacing:.06em;padding:12px;line-height:1.35}
+    letter-spacing:.06em;padding:10px;min-height:48px;line-height:1.3;gap:8px}
+  .hero-cta .l-long{display:none}
+  .hero-cta .l-short{display:inline}
   /* Soldan gelen koyu perde kaldırıldı — masaüstünde metin solda, mobilde altta.
-     Üst %13–40 neredeyse şeffaf (video burada görünüyor), metnin başladığı
-     %49'dan sonra sertçe koyulaşıyor. Eşikler kontrast ölçümüyle belirlendi:
+     Üst %13–45 neredeyse şeffaf (video burada görünüyor), metnin başladığı
+     %52'den sonra sertçe koyulaşıyor. Eşikler kontrast ölçümüyle belirlendi:
      güneş vuran duvarın en parlak %5'i üzerinde bile etiket 5:1'in üstünde. */
   .hero-scrim{background:linear-gradient(180deg,
-    rgba(13,10,8,.60) 0%,rgba(13,10,8,.12) 13%,rgba(13,10,8,.12) 40%,
-    rgba(13,10,8,.74) 49%,rgba(13,10,8,.88) 76%,rgba(13,10,8,.96) 100%)}
+    rgba(13,10,8,.60) 0%,rgba(13,10,8,.12) 13%,rgba(13,10,8,.12) 45%,
+    rgba(13,10,8,.74) 52.5%,rgba(13,10,8,.88) 78%,rgba(13,10,8,.96) 100%)}
   .kick{font-size:13px;letter-spacing:.22em}
   .svc p{font-size:16px}
   .step p{font-size:16px}
@@ -561,9 +567,11 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .stage p{font-size:15px;max-width:420px}
   .stage-num{margin-bottom:10px}
 }
+/* 320px: etiket tek satıra sığsın, düğmeler yine yan yana kalsın */
 @media(max-width:359px){
-  .hero-cta{flex-wrap:wrap;gap:10px}
-  .hero-cta .btn{flex:1 1 100%}
+  .hero-kick{font-size:12px;letter-spacing:0}
+  .hero-kick::before{width:16px}
+  .hero-cta .btn{flex:1 1 auto;padding:10px 6px}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -613,10 +621,11 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   <div class="hero-inner">
     <p class="hero-kick">İç Mimarlık &amp; Dekorasyon · Kütahya</p>
     <h1>Boş bir oda değil,<br><em>yaşanan bir ev.</em></h1>
-    <p class="hero-sub">Konut, ofis ve ticari mekânlarda ölçüden anahtar teslime kadar tek elden iç mimarlık. Konsept, moodboard, 3D görsel, malzeme seçimi ve uygulama — hepsi aynı ekipte.</p>
+    <p class="hero-sub">Konut, ofis ve ticari mekânlarda ölçüden anahtar teslime kadar tek elden iç mimarlık.<span class="more"> Konsept, moodboard, 3D görsel, malzeme seçimi ve uygulama — hepsi aynı ekipte.</span></p>
     <div class="hero-cta">
       <a href="#projeler" class="btn btn-primary">Projeleri Gör <span aria-hidden="true">→</span></a>
-      <a href="#iletisim" class="btn btn-ghost">Ücretsiz Ön Görüşme</a>
+      <!-- telefonda kısa etiket: uzun olan yan yana düzende iki satıra sarıyor -->
+      <a href="#iletisim" class="btn btn-ghost"><span class="l-long">Ücretsiz Ön Görüşme</span><span class="l-short">Ön Görüşme</span></a>
     </div>
   </div>
 
