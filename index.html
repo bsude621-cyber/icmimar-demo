@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>İç Mimarlık Stüdyonuz — Kütahya İç Mimarlık &amp; Dekorasyon</title>
 <meta name="description" content="Kütahya'da konut, ofis ve ticari mekânlarda ölçüden anahtar teslime kadar tek elden iç mimarlık: konsept, 3D görsel, malzeme seçimi ve uygulama.">
 <meta name="theme-color" content="#0d0a08">
@@ -10,8 +10,8 @@
 <!-- =====================================================================
      DEMO — DEĞİŞTİRİLECEK YERLER (tek tek arayıp değiştir)
      · Firma adı ............ "İç Mimarlık Stüdyonuz"  + <span class="brand-mono">İM</span>
-     · Telefon .............. 0 (274) 000 00 00
-     · WhatsApp ............. https://wa.me/905000000000
+     · Telefon .............. 0 (274) 000 00 00   (nav, iletişim VE mobil alt bar .m-tel)
+     · WhatsApp ............. https://wa.me/905000000000  (iletişim VE mobil alt bar .m-wa)
      · E-posta .............. bilgi@ornekicmimarlik.com
      · Adres ................ Kütahya adresi
      · İstatistikler ........ data-count değerleri
@@ -24,6 +24,8 @@
        h=3 media/hero3.*  Akşam mutfağı
        s=a frames/a/      Daire turu (giriş holünden salona)
        s=b frames/b/      Detaydan mekâna (makro dokudan geniş plana)
+     MOBİL MEDYA: telefonda hero<N>-m.mp4/.webm (720px) ve frames/<a|b>-m/ (720px, 41 kare)
+       inilir; masaüstü dosyalarına dokunulmaz. Seçim JS'teki isPhone ile yapılır.
      Karşılaştırma: senaryolar.html · Teslimde HERO/SCRL sabitlerini sabitle.
      ===================================================================== -->
 
@@ -114,10 +116,30 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   color:var(--terra-bright);letter-spacing:.12em;font-weight:600;white-space:nowrap;
   transition:background .25s}
 .demo-all:hover{background:var(--terra);color:var(--night)}
-@media(max-width:680px){
-  .demo-bar{right:8px;left:8px;bottom:8px;justify-content:center;flex-wrap:wrap;
-    border-radius:14px;padding:8px}
+.demo-toggle{display:none}
+/* Mobilde sabit alt bar var → senaryo anahtarı KATLANIR: kapalıyken tek bir çip,
+   açıkken alt barın üstünde tam panel. Hero CTA'larını ve alt barı örtmez. */
+@media(max-width:860px){
+  .demo-bar{right:max(8px,env(safe-area-inset-right));left:auto;
+    bottom:calc(68px + env(safe-area-inset-bottom) + 8px);
+    flex-wrap:wrap;justify-content:flex-end;border-radius:14px;padding:6px;font-size:13px;
+    gap:6px;row-gap:6px;max-width:calc(100vw - 16px)}
   .demo-bar-t{display:none}
+  .demo-toggle{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 16px;
+    border-radius:100px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    font-weight:600;color:var(--terra-bright);background:rgba(201,123,86,.16)}
+  .demo-toggle::before{content:"";width:7px;height:7px;flex:none;border-radius:50%;
+    background:var(--terra)}
+  .demo-bar:not(.open) .demo-seg,
+  .demo-bar:not(.open) .demo-all{display:none}
+  .demo-bar.open{left:max(8px,env(safe-area-inset-left));justify-content:center;padding:8px}
+  .demo-bar.open .demo-toggle{order:3}
+  .demo-seg button{min-height:44px;min-width:44px;padding:10px 14px;font-size:13px}
+  .demo-all{min-height:44px;display:inline-flex;align-items:center;padding:10px 16px;font-size:13px}
+  /* dokunmatikte hover yok → tam soluklaşma kullanımı zorlaştırır */
+  .demo-bar.dim{opacity:.72;transform:none}
+  /* menü açıkken senaryo çipi panelin üstünde durmasın */
+  .nav.open ~ .demo-bar{display:none}
 }
 
 /* ============ HERO ============ */
@@ -339,6 +361,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .tile-lbl{font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;
   color:var(--terra);margin-bottom:12px;font-weight:600}
 .tile-val{font-family:var(--font-display);font-size:19px;color:var(--frost);line-height:1.35}
+.tile-val .hours{font-family:var(--font-ui);font-size:12.5px;color:var(--mist)}
 .tile a{transition:color .25s}
 .tile a:hover{color:var(--terra-bright)}
 .contact-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
@@ -354,6 +377,20 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
 .foot-copy{max-width:1200px;margin:32px auto 0;padding-top:24px;border-top:1px solid var(--line);
   display:flex;justify-content:space-between;align-items:center;gap:20px;
   font-size:11px;color:var(--mist);letter-spacing:.05em}
+
+/* ============ MOBİL SABİT CTA ÇUBUĞU ============ */
+.mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:120;gap:9px;
+  padding:9px max(10px,env(safe-area-inset-left)) calc(9px + env(safe-area-inset-bottom))
+          max(10px,env(safe-area-inset-right));
+  background:rgba(13,10,8,.94);border-top:1px solid rgba(201,123,86,.28);
+  backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+  box-shadow:0 -8px 28px rgba(0,0,0,.55)}
+.mbar a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:50px;padding:13px 10px;border-radius:3px;font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;font-weight:700}
+.mbar svg{width:18px;height:18px;flex:none}
+.mbar .m-wa{background:#25d366;color:var(--night)}        /* kontrast 9.9:1 */
+.mbar .m-tel{border:1px solid rgba(242,236,230,.42);color:var(--frost)}  /* kontrast 14.9:1 */
 
 /* ============ REVEAL ============ */
 .reveal{opacity:0;transform:translateY(30px);
@@ -374,17 +411,54 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .steps{grid-template-columns:repeat(2,1fr);gap:34px 0}
 }
 @media(max-width:900px){
+  /* çentikli telefonlarda yatay modda kenara yapışmasın */
+  :root{--pad:max(22px,env(safe-area-inset-left),env(safe-area-inset-right))}
   .about-inner{grid-template-columns:1fr;gap:52px}
   .about-visual{max-width:480px;margin:0 auto}
   .stats{grid-template-columns:repeat(2,1fr);gap:26px}
-  .section{padding:96px 22px}
-  .contact{padding:96px 22px}
+  .section{padding:96px var(--pad)}
+  .contact{padding:96px var(--pad)}
   .contact-tiles{grid-template-columns:1fr;gap:14px}
   .scene{height:400vh}
   .stage h2{font-size:clamp(30px,7vw,44px)}
-  .stage p{font-size:14.5px}
-  .scrub-card{left:22px;right:22px;width:auto;bottom:11vh;padding:26px 24px}
+  .stage p{font-size:16px;line-height:1.65}
+  .scrub-card{left:var(--pad);right:var(--pad);width:auto;bottom:11vh;padding:26px 24px}
   .scrub-card h3{font-size:23px}
+}
+/* ---- MOBİL: sabit alt bar + 44px dokunma hedefleri + ≥13px yazı ---- */
+@media(max-width:860px){
+  .mbar{display:flex}
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+  .scroll-cue{display:none}
+
+  /* dokunma hedefleri — görsel boyut aynı, dokunma alanı büyür */
+  .brand{min-height:44px}
+  .nav-toggle{min-width:44px;min-height:44px;align-items:center;justify-content:center;padding:11px}
+  .nav-menu .nav-links a{min-height:48px;display:flex;align-items:center}
+  .btn{min-height:48px;font-size:13px;letter-spacing:.18em;padding:14px 24px}
+  .tile-val a{display:inline-flex;align-items:center;min-height:44px}
+  .foot-links{gap:0 26px}
+  .foot-links a{min-height:44px;display:inline-flex;align-items:center;font-size:13px;
+    letter-spacing:.16em}
+
+  /* ≥13px yazı — büyük harf + harf aralıklı etiketlerde aralık kısaltılır ki taşmasın */
+  .hero-kick{font-size:13px;letter-spacing:.22em}
+  .hero-sub{font-size:16px}
+  .kick{font-size:13px;letter-spacing:.22em}
+  .svc p{font-size:16px}
+  .step p{font-size:16px}
+  .about p{font-size:16px}
+  .proj-meta{font-size:13px;letter-spacing:.2em}
+  .proj-loc{font-size:13px}
+  .stat .lbl{font-size:13px;letter-spacing:.12em}
+  .tile-lbl{font-size:13px;letter-spacing:.2em}
+  .tile-val .hours{font-size:13.5px}
+  .scrub-card .loc{font-size:13px;letter-spacing:.14em}
+  .scrub-specs .l{font-size:13px;letter-spacing:.08em;line-height:1.5}
+  .scrub-hint{font-size:13px;letter-spacing:.18em}
+  .foot-copy{font-size:13px}
+  .about-visual text{font-size:13px}
+  .brand-sub{font-size:13px;letter-spacing:.1em;line-height:1.5}
 }
 /* Ölçüldü: marka 301px + menü 736px + 2x56px padding = 1149px.
    Marka ile menü arasında nefes payı bırakmak için eşik 1200px.
@@ -394,30 +468,34 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .nav-links,.nav-cta{display:none}
   .nav-toggle{display:flex}
   .nav.open .nav-menu{display:flex}
-  .nav-menu{display:none;position:fixed;inset:79px 0 0;background:rgba(13,10,8,.97);
+  .nav-menu{display:none;position:fixed;inset:var(--navh,79px) 0 0;background:rgba(13,10,8,.97);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    flex-direction:column;align-items:stretch;padding:34px min(6vw,56px);gap:0}
-  .nav.scrolled .nav-menu{inset:63px 0 0}
+    flex-direction:column;align-items:stretch;gap:0;overflow-y:auto;overscroll-behavior:contain;
+    padding:30px var(--pad) calc(34px + env(safe-area-inset-bottom))}
+  .nav.scrolled .nav-menu{inset:var(--navh,63px) 0 0}
   .nav-menu .nav-links{display:flex;flex-direction:column;gap:0}
   .nav-menu .nav-links a{font-size:16px;letter-spacing:.16em;color:var(--frost);
     padding:16px 0;border-bottom:1px solid var(--line)}
   .nav-menu .nav-links a::after{display:none}
-  .nav-menu .nav-cta{display:inline-block;margin-top:24px;text-align:center;font-size:11px}
+  .nav-menu .nav-cta{display:inline-flex;align-items:center;justify-content:center;
+    margin-top:24px;min-height:48px;font-size:13px;letter-spacing:.18em;padding:13px 22px}
 }
 @media(max-width:680px){
-  :root{--pad:20px}
-  .nav{padding:16px 20px}
-  .nav.scrolled{padding:12px 20px}
+  :root{--pad:max(20px,env(safe-area-inset-left),env(safe-area-inset-right))}
+  .nav{padding:14px var(--pad)}
+  .nav.scrolled{padding:10px var(--pad)}
   .brand-mono{width:30px;height:30px;font-size:13px}
-  .brand-name{font-size:14px;letter-spacing:.18em}
-  .brand-sub{font-size:8px;letter-spacing:.28em}
-  .nav-menu{inset:64px 0 0;padding:34px 22px}
-  .nav.scrolled .nav-menu{inset:56px 0 0}
-  .nav-menu .nav-links a{font-size:15px;padding:15px 0}
-  .hero-inner{padding-bottom:12vh}
+  .brand-name{font-size:15px;letter-spacing:.16em}
+  /* dar navda 34 karakterlik alt başlık 13px'te sığmıyor → dikey modda yalnız footer'da kalır */
+  .nav .brand-sub{display:none}
+  /* menü paneli tam nav yüksekliğinden başlasın — yükseklik JS ile ölçülüyor */
+  .nav-menu{inset:var(--navh,64px) 0 0;padding:26px var(--pad) calc(34px + env(safe-area-inset-bottom));
+    overflow-y:auto;overscroll-behavior:contain}
+  .nav.scrolled .nav-menu{inset:var(--navh,56px) 0 0}
+  .nav-menu .nav-links a{font-size:16px;padding:14px 0}
+  .hero-inner{padding-bottom:calc(12vh + 40px)}
   .hero-cta{gap:10px}
-  .btn{padding:13px 22px;font-size:10.5px;letter-spacing:.2em}
-  .scroll-cue{display:none}
+  .hero-cta .btn{flex:1 1 100%;justify-content:center}
   .svc-grid{grid-template-columns:1fr}
   .proj-grid{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr;gap:30px 0}
@@ -427,6 +505,40 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .foot-copy{flex-direction:column;text-align:center}
   .scrub-specs{gap:10px}
   .scrub-specs .v{font-size:18px}
+  .scrub-card{bottom:calc(68px + env(safe-area-inset-bottom) + 58px)}
+  .scrub-hint{bottom:calc(68px + env(safe-area-inset-bottom) + 14px);
+    left:var(--pad);right:var(--pad);transform:none;justify-content:center}
+  .contact-cta .btn{flex:1 1 100%;justify-content:center}
+}
+/* yatay mod (ör. 812×375): sahne yüksekliği ve kart konumu daralan ekrana göre */
+@media(max-width:900px) and (max-height:480px) and (orientation:landscape){
+  /* 375px yükseklik: hero metni sabit yüksekliğe sıkıştırılamaz.
+     Bölüm gerekirse büyüsün, içerik nav ile alt barın arasında ortalansın. */
+  .hero{height:auto;min-height:100svh}
+  .hero-inner{height:auto;min-height:100svh;justify-content:center;
+    padding-top:calc(var(--navh,72px) + 16px);
+    padding-bottom:calc(68px + env(safe-area-inset-bottom) + 16px)}
+  .nav{padding:9px var(--pad)}             /* alçak ekranda nav bandı incelir */
+  .nav.scrolled{padding:7px var(--pad)}
+  .nav .brand-sub{display:none}
+  .hero-kick{margin-bottom:8px}
+  .hero h1{font-size:clamp(26px,3.8vw,34px);line-height:1.05;margin-bottom:12px}
+  .hero-sub{font-size:13.5px;line-height:1.55;margin-bottom:14px;max-width:620px}
+  /* yatayda yan yana sığıyorlar: alt alta dizilirlerse hero ilk ekrana sığmıyor */
+  .hero-cta .btn,.contact-cta .btn{flex:0 1 auto;min-height:44px;padding:12px 20px}
+  /* 375px yükseklikte kart nav ile alt bar arasına sığmalı → sıkıştırılır */
+  .scrub-card{bottom:calc(68px + env(safe-area-inset-bottom) + 8px);padding:16px 20px;
+    max-width:min(520px,60vw);left:var(--pad);right:auto}   /* sağ alt senaryo çipine yer bırak */
+  .scrub-card h3{font-size:19px}
+  .scrub-card .loc{margin-bottom:10px}
+  .scrub-card .scrub-specs{padding:10px 0;margin-bottom:12px;gap:8px}
+  .scrub-card .scrub-specs .v{font-size:16px}
+  .scrub-card .scrub-specs .l{margin-top:4px}
+  .scrub-card .btn{min-height:44px;padding:11px 18px}
+  .scrub-hint{display:none}
+  .stage h2{font-size:clamp(26px,4.4vw,34px)}
+  .stage p{font-size:15px;max-width:420px}
+  .stage-num{margin-bottom:10px}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -880,7 +992,7 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
     <div class="tile">
       <div class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
       <p class="tile-lbl">Stüdyo</p>
-      <p class="tile-val">Kütahya, Merkez<br><span style="font-family:var(--font-ui);font-size:12.5px;color:var(--mist)">Hafta içi 09:00 – 18:00</span></p>
+      <p class="tile-val">Kütahya, Merkez<br><span class="hours">Hafta içi 09:00 – 18:00</span></p>
     </div>
   </div>
 
@@ -917,9 +1029,25 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   </div>
 </footer>
 
+<!-- ============ MOBİL SABİT CTA ÇUBUĞU ============ -->
+<div class="mbar" aria-label="Hızlı iletişim">
+  <a class="m-wa" target="_blank" rel="noopener"
+     href="https://wa.me/905000000000?text=Merhaba%2C%20i%C3%A7%20mimarl%C4%B1k%20projesi%20i%C3%A7in%20g%C3%B6r%C3%BC%C5%9Fmek%20istiyorum.">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.16 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.29z"/></svg>
+    WhatsApp
+  </a>
+  <a class="m-tel" href="tel:+902740000000">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+    Ara
+  </a>
+</div>
+
 <!-- ===== DEMO SENARYO ANAHTARI — teslimde bu bloğu sil ===== -->
 <div class="demo-bar" id="demoBar">
   <span class="demo-bar-t">Senaryo</span>
+  <!-- mobilde çubuk katlanır: hero CTA'larını ve alt barı örtmesin -->
+  <button type="button" class="demo-toggle" id="demoToggle" aria-expanded="false"
+          aria-controls="demoBar" aria-label="Senaryo anahtarını aç">Senaryo</button>
   <div class="demo-seg" data-group="h" role="group" aria-label="Hero videosu">
     <button type="button" data-v="1">Salon</button>
     <button type="button" data-v="2">Malzeme</button>
@@ -969,39 +1097,84 @@ const COPY = {
 const nav = document.getElementById('nav');
 const navToggle = document.getElementById('navToggle');
 const navMenu = document.getElementById('navMenu');
-const onScrollNav = () => nav.classList.toggle('scrolled', scrollY > 40);
-addEventListener('scroll', onScrollNav, {passive:true}); onScrollNav();
 
-navToggle.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
+/* Menü paneli navın tam altından başlasın: yükseklik sabit değil
+   (scrolled sınıfı, marka satırı, safe-area) → ölç ve --navh'a yaz. */
+function navH(){
+  // panel açıkken nav'ın kendi yüksekliği panelle karışmasın: sadece üst satırı ölç
+  const brandBottom = nav.querySelector('.brand').getBoundingClientRect().bottom;
+  const padB = parseFloat(getComputedStyle(nav).paddingBottom) || 0;
+  document.documentElement.style.setProperty('--navh', Math.round(brandBottom + padB) + 'px');
+}
+const onScrollNav = () => { nav.classList.toggle('scrolled', scrollY > 40); navH(); };
+addEventListener('scroll', onScrollNav, {passive:true});
+addEventListener('resize', navH, {passive:true});
+addEventListener('orientationchange', () => setTimeout(navH, 60), {passive:true});
+onScrollNav();
+
+function setMenu(open){
+  nav.classList.toggle('open', open);
   navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'Menüyü kapat' : 'Menüyü aç');
   document.body.style.overflow = open ? 'hidden' : '';
+  if (open){ navH(); (navMenu.querySelector('a') || navToggle).focus(); }
+}
+navToggle.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+navMenu.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && nav.classList.contains('open')){ setMenu(false); navToggle.focus(); }
+  if (e.key !== 'Tab' || !nav.classList.contains('open')) return;
+  // odak paneli terk etmesin
+  const f = [navToggle, ...navMenu.querySelectorAll('a')];
+  const first = f[0], last = f[f.length-1];
+  if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
 });
-navMenu.addEventListener('click', e => {
-  if (e.target.closest('a')) {
-    nav.classList.remove('open');
-    navToggle.setAttribute('aria-expanded','false');
-    document.body.style.overflow = '';
-  }
-});
+// masaüstüne genişlerken panel açık kalmasın (body scroll kilidi de kalkar)
+matchMedia('(min-width:1201px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
-/* ---------- HERO VIDEO: senaryoya göre kaynak, yoksa fallback ---------- */
+/* ---------- HERO VIDEO ----------
+   <source> listesi BIRAKILMADI: iOS Safari webm'i "destekliyorum" deyip seçtikten
+   sonra çözemezse <source> hatası tetiklenmez, video sessizce donuk kalır.
+   Tek src + canPlayType ile format seçimi + error'da diğer formata geçiş.
+   Mobilde 720px varyant (hero<N>-m.*) inilir — masaüstü 1600px dosyaya dokunulmaz. */
+/* Telefon mü? Yatay moddaki telefon 812px geniştir ama hâlâ telefondur —
+   kısa kenara da bak, yoksa yatayda 8 MB'lık masaüstü seti iner. */
+const isPhone = innerWidth < 768 || Math.min(innerWidth, innerHeight) < 600;
+const saveData = !!(navigator.connection && navigator.connection.saveData);
+
+const VFMT = (() => {
+  const t = document.createElement('video');
+  const webm = t.canPlayType('video/webm; codecs="vp9"');
+  const mp4  = t.canPlayType('video/mp4; codecs="avc1.640028"') || t.canPlayType('video/mp4');
+  const apple = /iP(hone|od|ad)/.test(navigator.userAgent)
+    || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent))
+    || (/Safari/.test(navigator.userAgent) && !/Chrom|Android|Edg|OPR/.test(navigator.userAgent));
+  if (apple && mp4) return 'mp4';                 // Safari: her zaman mp4
+  return webm === 'probably' ? 'webm' : (mp4 ? 'mp4' : 'webm');
+})();
+
 const heroVideo = document.getElementById('heroVideo');
 if (heroVideo){
-  if (reduced) heroVideo.remove();
+  if (reduced || saveData) heroVideo.remove();    // → .hero-fallback görünür
   else {
-    [['media/hero' + HERO + '.webm','video/webm'],
-     ['media/hero' + HERO + '.mp4','video/mp4']].forEach(([src,type]) => {
-      const s = document.createElement('source'); s.src = src; s.type = type;
-      heroVideo.appendChild(s);
+    const base = 'media/hero' + HERO + (isPhone ? '-m' : '');
+    let alt = VFMT === 'webm' ? 'mp4' : 'webm';
+    const vplay = () => { const p = heroVideo.play(); if (p && p.catch) p.catch(() => { blocked = true; }); };
+    let blocked = false;
+    heroVideo.addEventListener('error', () => {
+      if (alt){ const a = alt; alt = ''; heroVideo.src = base + '.' + a; heroVideo.load(); vplay(); }
+      else heroVideo.remove();                    // ikisi de açılmadı → fallback
     });
-    // hiçbir kaynak açılamazsa elementi kaldır → .hero-fallback görünür
-    heroVideo.addEventListener('error', () => heroVideo.remove(), true);
+    heroVideo.src = base + '.' + VFMT;
     heroVideo.load();
-    heroVideo.play().catch(()=>{});
+    vplay();
+    // otomatik oynatma engellendiyse (iOS Düşük Güç Modu) ilk dokunuşta başlat
+    const resume = () => { if (blocked && heroVideo.isConnected){ blocked = false; heroVideo.play().catch(()=>{}); } };
+    ['touchstart','click','keydown'].forEach(e => addEventListener(e, resume, {passive:true, once:false}));
     document.addEventListener('visibilitychange', () => {
       if (!heroVideo.isConnected) return;
-      document.hidden ? heroVideo.pause() : heroVideo.play().catch(()=>{});
+      document.hidden ? heroVideo.pause() : vplay();
     });
   }
 }
@@ -1026,9 +1199,12 @@ COPY[SCRL].forEach((row, i) => {
   const ctx = canvas.getContext('2d', {alpha:false});
 
   const FRAME_COUNT = 120;                     // ffmpeg fps ile BİREBİR aynı olmalı
-  const FRAME_PATH  = i => 'frames/' + SCRL + '/' + String(i).padStart(4,'0') + '.jpg';
-  const isMobile    = innerWidth < 768;
-  const STEP        = isMobile ? 2 : 1;        // mobilde kareyi seyrelt → yarı bant genişliği
+  const isMobile    = isPhone;
+  /* Mobilde ayrı, hafif set: frames/<a|b>-m/ → 720px genişlik, her 3. kare (41 kare).
+     1440px'lik masaüstü seti telefonda 7–8 MB ederdi; bu set ~0,9 MB. */
+  const DIR         = 'frames/' + SCRL + (isMobile ? '-m' : '') + '/';
+  const FRAME_PATH  = i => DIR + String(i).padStart(4,'0') + '.jpg';
+  const STEP        = isMobile ? 3 : 1;
 
   const imgs = new Array(FRAME_COUNT + 1);
   let loaded = 0, failed = 0, framesReady = false;
@@ -1052,14 +1228,37 @@ COPY[SCRL].forEach((row, i) => {
   for (let i = 1; i <= FRAME_COUNT; i += STEP) kareler.push(i);
   if (kareler[kareler.length - 1] !== FRAME_COUNT) kareler.push(FRAME_COUNT);
 
-  kareler.forEach(i => {
-    const im = new Image();
-    im.decoding = 'async';
-    im.onload  = () => { if (++loaded >= Math.floor(kareler.length * 0.6)) framesReady = true; };
-    im.onerror = () => { failed++; };
-    im.src = FRAME_PATH(i);
-    imgs[i] = im;
-  });
+  /* GEÇ YÜKLEME: kareler sayfa açılışında değil, sahne yaklaşınca insin.
+     Hero'yla aynı anda yarışmasınlar — ilk ekranın hızı buna bağlı. */
+  let preloadStarted = false;
+  function preload(){
+    if (preloadStarted) return; preloadStarted = true;
+    kareler.forEach(i => {
+      const im = new Image();
+      im.decoding = 'async';
+      im.onload  = () => { if (++loaded >= Math.floor(kareler.length * 0.6)) framesReady = true; };
+      im.onerror = () => { failed++; };
+      im.src = FRAME_PATH(i);
+      imgs[i] = im;
+    });
+  }
+  // sahne bir ekran boyu yaklaşınca başla
+  function maybePreload(){
+    if (!preloadStarted && scene.getBoundingClientRect().top < innerHeight * 1.5) preload();
+  }
+  if (self.IntersectionObserver){
+    const pio = new IntersectionObserver(es => {
+      if (es.some(e => e.isIntersecting)){ preload(); pio.disconnect(); }
+    }, {rootMargin:'0px 0px 60% 0px'});
+    pio.observe(scene);
+  }
+  /* IO'nun ilk geri çağırması "kesişmiyor" derse ve kullanıcı hiç kaydırmazsa
+     ikinci bir çağrı gelmez — sahne hemen hero'nun altında olduğu için
+     kaydırma ve hero videosu da tetikleyici olarak eklendi. */
+  addEventListener('scroll', maybePreload, {passive:true});
+  const hv0 = document.getElementById('heroVideo');
+  if (hv0) hv0.addEventListener('loadeddata', () => setTimeout(maybePreload, 250), {once:true});
+  setTimeout(preload, 2500);   // hiçbiri olmazsa: ilk ekran çizildikten sonra
 
   /* --- progress --- */
   function getProgress(){
@@ -1286,12 +1485,23 @@ document.getElementById('yil').textContent = new Date().getFullYear();
     }
   } catch(e){}
 
+  // mobilde katlanır çip: açık/kapalı
+  const toggle = document.getElementById('demoToggle');
+  if (toggle) toggle.addEventListener('click', () => {
+    const open = bar.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Senaryo anahtarını kapat' : 'Senaryo anahtarını aç');
+    bar.classList.remove('dim');
+  });
+
   // okumayı engellemesin: scroll dururken soluklaş
   let t;
   const wake = () => { bar.classList.remove('dim'); clearTimeout(t);
     t = setTimeout(() => bar.classList.add('dim'), 2200); };
   addEventListener('scroll', wake, {passive:true});
   bar.addEventListener('pointerenter', () => { clearTimeout(t); bar.classList.remove('dim'); });
+  // dokunmatikte hover yok: çubuğa dokunulduğunda da uyansın
+  bar.addEventListener('touchstart', () => { clearTimeout(t); bar.classList.remove('dim'); }, {passive:true});
   wake();
 })();
 })();
