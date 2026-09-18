@@ -567,6 +567,16 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
   .stage p{font-size:15px;max-width:420px}
   .stage-num{margin-bottom:10px}
 }
+@media(max-width:900px){
+  /* Telefonda metin kadrajın ortasına düşüyor; radyal karartma orayı açık
+     bırakıyordu ve pencere ışığı + tül perde üstünde krem/terra yazı
+     okunmuyordu (telefon testi). Metin artık kapanış kartıyla aynı dilde,
+     buzlu koyu bir panelin içinde — hangi kare gelirse gelsin zemin sabit. */
+  .stage-inner{padding:16px 18px 18px;border:1px solid rgba(201,123,86,.28);border-radius:3px;
+    background:rgba(17,12,9,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .stage p{margin-top:12px;color:var(--frost)}
+}
 /* 320px: etiket tek satıra sığsın, düğmeler yine yan yana kalsın */
 @media(max-width:359px){
   .hero-kick{font-size:12px;letter-spacing:0}
