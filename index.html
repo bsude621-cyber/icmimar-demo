@@ -572,9 +572,14 @@ footer{background:var(--night);border-top:1px solid var(--line);padding:56px var
      bırakıyordu ve pencere ışığı + tül perde üstünde krem/terra yazı
      okunmuyordu (telefon testi). Metin artık kapanış kartıyla aynı dilde,
      buzlu koyu bir panelin içinde — hangi kare gelirse gelsin zemin sabit. */
-  .stage-inner{padding:16px 18px 18px;border:1px solid rgba(201,123,86,.28);border-radius:3px;
-    background:rgba(17,12,9,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  /* Mert: panel fazla koyu → çok hafif bir karartı kalsın. Okunurluğu artık
+     zeminden çok bulanıklık (arkadaki pencere/tül detayı eriyor) ve metin
+     gölgesi taşıyor. */
+  .stage-inner{padding:16px 18px 18px;border:1px solid rgba(201,123,86,.18);border-radius:3px;
+    background:rgba(17,12,9,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .stage h2{text-shadow:0 2px 14px rgba(0,0,0,.75)}
+  .stage p{text-shadow:0 1px 10px rgba(0,0,0,.85)}
+  .stage-num{color:var(--terra-bright);text-shadow:0 1px 8px rgba(0,0,0,.8)}
   .stage p{margin-top:12px;color:var(--frost)}
 }
 /* 320px: etiket tek satıra sığsın, düğmeler yine yan yana kalsın */
